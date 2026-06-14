@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Dashboard</title>
+    <link rel="stylesheet" href="mystyle2.css">
+
+    <style>
+        .home-info-panel {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--bg-card) !important;
+            border-radius: var(--radius-lg) !important;
+            box-shadow: var(--shadow-base) !important;
+            padding: 36px !important;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            text-align: center;
+        }
+
+        .home-info-panel p {
+            font-size: var(--font-md);
+            color: var(--text-muted);
+            max-width: 540px;
+            margin: 0 auto;
+        }
+
+        .preview-canvas {
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .preview-canvas::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            opacity: 0.05;
+            background-image: radial-gradient(#ffffff 2px, transparent 2px);
+            background-size: 24px 24px;
+        }
+
+        .canvas-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 2;
+        }
+
+        .canvas-title {
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .canvas-status {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            padding: 4px 10px;
+            border-radius: var(--radius-full);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .canvas-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            text-align: left;
+            z-index: 2;
+        }
+
+        .canvas-stat-box {
+            border-left: 2px solid rgba(255, 255, 255, 0.15);
+            padding-left: 12px;
+        }
+
+        .canvas-stat-box label {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .canvas-stat-box .number {
+            color: #ffffff;
+            font-size: 20px;
+            font-weight: 700;
+            font-family: ui-monospace, monospace;
+        }
+
+        .canvas-stat-box .number.green {
+            color: #10b981;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Home Dashboard</h1>
+
+<div class="grid-container">
+    <a href="Chart.html" class="button">Chart</a>
+    <a href="Past.html" class="button">Past</a>
+    <a href="Insert Info.html" class="button">Insert Info</a>
+    <a href="Suggestion.html" class="button">Suggestion</a>
+</div>
+
+<div class="home-info-panel">
+    <h2>Financial Overview</h2>
+    <p>Welcome! Use the navigation buttons above to add data, view charts, check your past records, or get item suggestions.</p>
+
+    <div class="preview-canvas">
+        <div class="canvas-top">
+            <div class="canvas-title">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-orange);"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+                Current Totals
+            </div>
+            <div class="canvas-status" id="vaultStatus">Active</div>
+        </div>
+
+        <div class="canvas-metrics">
+            <div class="canvas-stat-box">
+                <label>Total Expenses</label>
+                <div class="number" id="homeTotalCost">$0.00</div>
+            </div>
+            <div class="canvas-stat-box">
+                <label>Total Profit</label>
+                <div class="number green" id="homeNetBalance">+$0.00</div>
+            </div>
+            <div class="canvas-stat-box">
+                <label>Status</label>
+                <div class="number" id="homeStability" style="color: var(--accent-orange);">Ready</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const activeUser = (localStorage.getItem("currentUser") || "guest").toLowerCase();
+        const userStorageKey = `records_${activeUser}`;
+        const records = JSON.parse(localStorage.getItem(userStorageKey)) || [];
+
+        let totalBillsCalculated = 0;
+        let totalEarningsCalculated = 0;
+
+        const expenseKeys = [
+            "gas", "electricity", "water", "rent", "phoneWifi", "cellphone",
+            "website", "trash", "accountedFees", "tax", "salary", "repair",
+            "supplies", "merchantFees", "insurance", "other"
+        ];
+
+        if (records && records.length > 0) {
+            records.forEach(match => {
+                const entries = match.entries || [];
+                for (let e of entries) {
+                    if (e.bills) {
+                        expenseKeys.forEach(key => {
+                            totalBillsCalculated += Number(e.bills[key] || 0);
+                        });
+                    }
+                    if (e.earnings !== undefined) {
+                        totalEarningsCalculated += Number(e.earnings || 0);
+                    }
+                }
+            });
+        }
+
+        let cumulativeNetProfit = totalEarningsCalculated - totalBillsCalculated;
+
+        const costDisplayElement = document.getElementById("homeTotalCost");
+        const balanceDisplayElement = document.getElementById("homeNetBalance");
+        const stabilityElement = document.getElementById("homeStability");
+        const statusBadge = document.getElementById("vaultStatus");
+
+        costDisplayElement.textContent = `$${totalBillsCalculated.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+
+        if (records.length > 0) {
+            stabilityElement.textContent = "Saved";
+            statusBadge.textContent = "Connected";
+
+            if (cumulativeNetProfit >= 0) {
+                balanceDisplayElement.textContent = `+$${cumulativeNetProfit.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                balanceDisplayElement.style.color = "#10b981";
+            } else {
+                balanceDisplayElement.textContent = `-$${Math.abs(cumulativeNetProfit).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                balanceDisplayElement.style.color = "#ef4444";
+            }
+        } else {
+            costDisplayElement.textContent = "$0.00";
+            balanceDisplayElement.textContent = "+$0.00";
+            balanceDisplayElement.style.color = "#10b981";
+            stabilityElement.textContent = "Ready";
+            statusBadge.textContent = "Empty";
+        }
+    });
+</script>
+</body>
+</html>

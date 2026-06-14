@@ -1,0 +1,534 @@
+/* ==========================================================================
+   1. CORE DESIGN SYSTEM & VARIABLES
+   ========================================================================== */
+:root {
+    /* Color Palette: Minimal Slate & Clean Accent Indicators */
+    --bg-main: #f8fafc;          /* Muted, soft light gray background */
+    --bg-card: #ffffff;          /* Pure white for high-contrast rounded cards */
+    --text-primary: #1e293b;     /* Dark slate gray for primary readable elements */
+    --text-muted: #64748b;       /* Soft cool gray for auxiliary text */
+
+    /* Strict Functional Color Signals */
+    --accent-orange: #f97316;    /* Active navigation, selections, highlights */
+    --trend-green: #10b981;      /* Growth, positive profits */
+    --trend-red: #ef4444;        /* Vulnerabilities, dynamic losses */
+    --border-subtle: #e2e8f0;    /* Structurally uniform dividers */
+    --sidebar-dark: #0f172a;     /* Deep slate for dark layout blocks */
+
+    /* Typography Hierarchy Scalers */
+    --font-xl: 32px;             /* Dynamic core dashboard metrics */
+    --font-lg: 18px;             /* Primary subset section headings */
+    --font-md: 14px;             /* Body text and input content */
+    --font-sm: 12px;             /* Explanatory notes & tags */
+
+    /* Layout & Alignment Radii */
+    --radius-lg: 16px;
+    --radius-md: 10px;
+    --radius-full: 999px;
+
+    /* Soft Elevation Layering (Zero Heavy Borders) */
+    --shadow-base: 0 1px 3px rgba(0, 0, 0, 0.02), 0 4px 16px rgba(0, 0, 0, 0.03);
+    --shadow-hover: 0 10px 30px rgba(15, 23, 42, 0.05);
+}
+
+/* ==========================================================================
+   2. GLOBAL ARCHITECTURE & CENTERED VERTICAL FLOW
+   ========================================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Inter", "Poppins", -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+body {
+    min-height: 100vh;
+    padding: 60px 24px;          /* Generous uniform top/bottom buffer */
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    line-height: 1.6;
+
+    /* Forces absolute horizontal and vertical cleanliness across all pages */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+/* Master Layout Container: Adapts perfectly whether the page content is small or massive */
+.dashboard-wrapper,
+.charts-grid,
+.suggestion-dashboard-layout {
+    width: 100%;
+    max-width: 1140px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;                  /* Generous space between independent sections */
+}
+
+/* ==========================================================================
+   3. PERFECTLY CENTERED NAVIGATION & HEADERS (ALL PAGES)
+   ========================================================================== */
+h1 {
+    width: 100%;
+    max-width: 800px;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.6px;
+    color: var(--text-primary);
+    margin-bottom: 32px;
+    text-align: center;         /* Center aligned for premium splash presentation */
+}
+
+/* Navigation Layout: Clean, balanced, centered wrap */
+.grid-container {
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    justify-content: center;    /* Centered horizontal alignment */
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 56px;        /* Prominent breathing room before cards start */
+}
+
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 22px;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: var(--font-md);
+    font-weight: 500;
+    box-shadow: var(--shadow-base);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.button:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--accent-orange);
+}
+
+/* Active Highlight Sections Mapping */
+.button.active, .button:focus {
+    border-color: var(--accent-orange);
+    color: var(--accent-orange);
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   4. UNIFORM CARDS & FLEXIBLE FORM PROPORTIONS
+   ========================================================================== */
+.input-info,
+.Past-info,
+.chart-card,
+.metric-card,
+.main-report-card,
+.suggestion-stat-card,
+.price-optimization-box,
+.strategy-narrative-box,
+#confirmBox {
+    background-color: var(--bg-card) !important;
+    border: none !important;
+    border-radius: var(--radius-lg) !important;
+    box-shadow: var(--shadow-base) !important;
+    padding: 36px !important;   /* Large padding inside sections so data never feels cramped */
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* Dedicated Input / Mini-Tab Spacing Fixes (Insert Info Page) */
+.input-info {
+    width: 100%;
+    max-width: 480px;           /* Prevents small pages from looking stretched out */
+    margin: 0 auto;             /* Keeps card centered on screen */
+    display: flex;
+    flex-direction: column;
+    align-items: center;        /* Center aligns internal input labels */
+    gap: 24px;                  /* Clean internal element vertical separation */
+}
+
+#questionLabel {
+    font-size: var(--font-md);
+    font-weight: 600;
+    color: var(--text-primary);
+    text-align: center;
+    margin-bottom: 4px;
+}
+
+.input-info input,
+.input-info select {
+    width: 100%;
+    max-width: 320px;           /* Proportional text input sizing */
+    height: 44px;
+    padding: 0 16px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-subtle);
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+    font-size: var(--font-md);
+    text-align: center;         /* Clean balanced typography flow */
+    outline: none;
+    transition: border-color 0.15s ease;
+}
+
+.input-info input:focus,
+.input-info select:focus {
+    border-color: var(--accent-orange);
+}
+
+/* Centered Form Action Buttons (Insert Info) */
+#submitBtn {
+    width: auto;
+    min-width: 160px;
+    height: 44px;
+    padding: 0 24px;
+    border: none;
+    border-radius: var(--radius-md);
+    background-color: var(--text-primary);
+    color: var(--bg-card);
+    font-size: var(--font-md);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 8px;
+}
+
+#submitBtn:hover {
+    background-color: var(--accent-orange);
+}
+
+/* ==========================================================================
+   5. RESTRUCTURED PAST INFRASTRUCTURE CARD (PAST PAGE)
+   ========================================================================== */
+.Past-info {
+    width: 100%;
+    max-width: 800px;           /* Expanded to balance columns perfectly */
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;                  /* Generous block spacing */
+}
+
+/* Fixes the Skewed Button: Places Selects and Button inline side-by-side */
+.Past-info select,
+.Past-info #searchBtn {
+    height: 44px;
+    border-radius: var(--radius-md);
+    font-size: var(--font-md);
+    outline: none;
+}
+
+.Past-info select {
+    flex: 1;                    /* Allows dropdowns to grow equally */
+    min-width: 160px;
+    padding: 0 16px;
+    border: 1px solid var(--border-subtle);
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+    transition: border-color 0.15s ease;
+}
+
+.Past-info select:focus {
+    border-color: var(--accent-orange);
+}
+
+.Past-info #yearSelect { order: 1; }
+.Past-info #monthSelect { order: 2; }
+.Past-info #searchBtn {
+    order: 3;
+    padding: 0 28px;
+    border: none;
+    background-color: var(--text-primary);
+    color: var(--bg-card);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.Past-info #searchBtn:hover {
+    background-color: var(--accent-orange);
+}
+
+/* Display Component Spacing */
+.Past-info #monthYearDisplay {
+    order: 4;
+    font-size: var(--font-xl);
+    font-weight: 700;
+    letter-spacing: -1px;
+    color: var(--text-primary);
+    text-align: center;
+    margin: 8px 0 -8px 0;
+}
+
+/* Moves the 15 paragraph rows from a single list into a clean grid */
+.Past-info p {
+    order: 5;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;         /* Compact table density height */
+    background-color: #ffffff;
+    border-bottom: 1px solid var(--border-subtle);
+    font-size: var(--font-md);
+    color: var(--text-primary);
+}
+
+/* Arranges ledger data into two columns cleanly */
+@media (min-width: 640px) {
+    .Past-info {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        align-items: start;
+        gap: 16px 24px;
+    }
+
+    #monthYearDisplay, .Past-info h2 {
+        grid-column: span 2;
+    }
+
+    #yearSelect { grid-column: span 1; }
+    #monthSelect { grid-column: span 1; }
+    #searchBtn { grid-column: span 2; width: 100%; max-width: 200px; margin: 12px auto 0 auto; }
+}
+
+.Past-info p span {
+    font-family: ui-monospace, SFMono-Regular, monospace;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* Premium Total Outflow Banner */
+.Past-info h2 {
+    order: 6;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    border-radius: var(--radius-md);
+    background-color: var(--text-primary);
+    color: var(--bg-card);
+    font-size: var(--font-lg);
+    font-weight: 600;
+    margin-top: 24px;
+}
+
+.Past-info h2 span {
+    color: var(--trend-green);  /* Highlights using green profit token */
+    font-weight: 700;
+    font-family: ui-monospace, monospace;
+}
+
+/* ==========================================================================
+   6. CHART & REPORT LAYOUT ARCHITECTURE (CHART PAGE)
+   ========================================================================== */
+.charts-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+    width: 100%;
+}
+
+@media (min-width: 850px) {
+    .charts-grid {
+        grid-template-columns: 1fr 1fr; /* Side by side on desktop layouts */
+    }
+}
+
+.chart-card h2 {
+    font-size: var(--font-lg);
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+/* Wide charts given vertical space for easy trend lines */
+.canvas-container, .chart-wrapper {
+    position: relative;
+    width: 100%;
+    height: 360px;
+    margin-top: 12px;
+}
+
+/* Filter Card Layout tweaks */
+.filter-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+/* ==========================================================================
+   7. EXECUTIVE DATA AND METRIC PANELS
+   ========================================================================== */
+h2, .section-title, #confirmBox h3, .strategy-narrative-box h3 {
+    font-size: var(--font-lg);
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.3px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.metric-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.metric-card label, .suggestion-stat-card label, .price-optimization-box .optimized-title {
+    font-size: var(--font-sm);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+}
+
+/* Core Hero Numbers: Biggest numbers on the screen */
+.metric-card .value,
+.price-optimization-box .optimized-price {
+    font-size: var(--font-xl);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -1px;
+    color: var(--text-primary);
+}
+
+.text-success, .pill-excellent { color: var(--trend-green) !important; }
+.text-danger, .pill-danger { color: var(--trend-red) !important; }
+
+.summary-grid, .suggestion-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
+    width: 100%;
+}
+
+.dashboard-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 32px;
+    width: 100%;
+}
+
+@media (max-width: 900px) {
+    .dashboard-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Compact Table Layout Formatting (Alternative Pages) */
+.breakdown-list {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+.breakdown-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    font-size: var(--font-md);
+    color: var(--text-primary);
+    background-color: var(--bg-card);
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.breakdown-item:nth-child(even) {
+    background-color: #f8fafc;   /* Alternating light row shades */
+}
+
+.breakdown-item:last-child { border-bottom: none; }
+.breakdown-item .dots { display: none; }
+.breakdown-item .amt { font-weight: 600; font-family: monospace; }
+
+/* ==========================================================================
+   8. SUGGESTION MODULE & SPLIT ARCHITECTURES (SUGGESTION PAGE)
+   ========================================================================== */
+.suggestion-dashboard-layout.split-view {
+    display: grid;
+    grid-template-columns: 4fr 7fr;
+    gap: 32px;
+    align-items: start;
+}
+
+.status-pill {
+    padding: 4px 12px;
+    border-radius: var(--radius-full);
+    font-size: 11px;
+    font-weight: 700;
+}
+.pill-solid { background: #f1f5f9; color: var(--text-muted); }
+.pill-adjustment { background: #fff7ed; color: var(--accent-orange); }
+
+.strategy-narrative-box {
+    border-left: 4px solid var(--accent-orange) !important; /* Context accent line strip */
+}
+.strategy-narrative-box p {
+    font-size: var(--font-md);
+    color: var(--text-primary);
+}
+
+/* ==========================================================================
+   9. SYSTEM CONFIRMATION MODALS
+   ========================================================================== */
+#confirmBox {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 400px;
+    z-index: 1000;
+    text-align: center;
+}
+
+#confirmText {
+    background-color: var(--bg-main);
+    padding: 14px;
+    border-radius: var(--radius-md);
+    font-size: var(--font-md);
+    margin: 16px 0;
+}
+
+#confirmBox button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: var(--font-sm);
+    font-weight: 600;
+    cursor: pointer;
+    margin: 0 4px;
+}
+#confirmYes { background-color: var(--trend-green); color: white; }
+#confirmNo { background-color: var(--border-subtle); color: var(--text-primary); }
+
+/* ==========================================================================
+   10. SYSTEM RESPONSIVE SCALE MEDIA
+   ========================================================================== */
+@media (max-width: 768px) {
+    body { padding: 40px 16px; }
+    .grid-container { margin-bottom: 40px; }
+    .dashboard-row, .suggestion-dashboard-layout.split-view { grid-template-columns: 1fr; gap: 24px; }
+    .input-info input, .input-info select { max-width: 100%; }
+    .Past-info { padding: 24px !important; }
+}

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Data</title>
+    <link rel="stylesheet" href="mystyle2.css">
+</head>
+<body>
+
+<h1>Insert Info</h1>
+
+<div class="grid-container">
+    <a href="Website.html" class="button">Home</a>
+    <a href="Chart.html" class="button">Chart</a>
+    <a href="Past.html" class="button">Past</a>
+    <a href="Insert Info.html" class="button">Insert Info</a>
+    <a href="Suggestion.html" class="button">Suggestion</a>
+</div>
+
+<div class="input-info">
+    <select id="modeSelect">
+        <option value="">Choose Category</option>
+        <option value="earnings">Income (Daily Wage)</option>
+        <option value="expenses">Expenses (Monthly)</option>
+    </select>
+
+    <label id="questionLabel">Choose Category</label>
+    <input id="inputField" type="number" style="display:none;" placeholder="Enter amount">
+
+    <select id="expenseType" style="display:none;">
+        <option value="">Choose Expense Type</option>
+        <option value="Gas">Gas</option>
+        <option value="Electricity">Electricity</option>
+        <option value="Water">Water</option>
+        <option value="Rent">Rent</option>
+        <option value="Phone+Wifi">Phone & Wifi</option>
+        <option value="Cellphone">Cellphone</option>
+        <option value="Website">Website</option>
+        <option value="Trash">Trash</option>
+        <option value="Accounted Fees">Fees</option>
+        <option value="Tax">Tax</option>
+        <option value="Salary">Staff Salary</option>
+        <option value="Repair">Repairs</option>
+        <option value="Supplies">Supplies</option>
+        <option value="Merchant Fees">Card Fees</option>
+        <option value="Other">Other</option>
+    </select>
+
+    <select id="daySelect" style="display:none;">
+        <option value="">Choose Day</option>
+        <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option><option>20</option><option>21</option><option>22</option><option>23</option><option>24</option><option>25</option><option>26</option><option>27</option><option>28</option><option>29</option><option>30</option><option>31</option>
+    </select>
+
+    <select id="monthSelect" style="display:none;">
+        <option value="">Choose Month</option>
+        <option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option>
+    </select>
+
+    <input id="yearInput" type="number" placeholder="Enter Year" style="display:none;">
+    <button id="submitBtn" class="button small-button">Submit</button>
+</div>
+
+<div id="confirmBox" style="display:none;">
+    <h3>Confirm Entry</h3>
+    <pre id="confirmText"></pre>
+    <button id="confirmYes">Confirm</button>
+    <button id="confirmNo">Cancel</button>
+</div>
+
+<script src="ScriptInsert.js"></script>
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Past Records</title>
+    <link rel="stylesheet" href="mystyle2.css">
+    <style>
+        .past-dashboard-container {
+            width: 100%;
+            max-width: 900px;
+            margin: 30px auto;
+            background: #ffffff;
+            padding: 36px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            justify-content: center;
+        }
+
+        .filter-row select {
+            width: 200px;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .filter-row button {
+            padding: 12px 28px;
+            border-radius: 8px;
+            background-color: #0f172a;
+            color: white;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: background 0.2s;
+        }
+
+        .filter-row button:hover {
+            background-color: #1e293b;
+        }
+
+        .display-header {
+            text-align: center;
+            font-size: 1.4rem;
+            color: #0f172a;
+            margin: 20px 0;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .balance-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 28px;
+            text-align: center;
+        }
+
+        .balance-card h2 {
+            margin: 4px 0 0 0;
+            font-size: 2.2rem;
+            color: #0f172a;
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0 40px;
+        }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px dashed #e2e8f0;
+            font-size: 1rem;
+            color: #334155;
+        }
+
+        .data-row span:first-child {
+            font-weight: 600;
+        }
+
+        .data-row span:last-child {
+            font-family: monospace;
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
+
+        @media (max-width: 768px) {
+            .data-grid {
+                grid-template-columns: 1fr;
+            }
+            .filter-row {
+                flex-direction: column;
+                align-items: center;
+            }
+            .filter-row select, .filter-row button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<h1>Past Data</h1>
+
+<div class="grid-container">
+    <a href="Website.html" class="button">Home</a>
+    <a href="Chart.html" class="button">Chart</a>
+    <a href="Past.html" class="button">Past</a>
+    <a href="Insert Info.html" class="button">Insert Info</a>
+    <a href="Suggestion.html" class="button">Suggestion</a>
+</div>
+
+<div class="past-dashboard-container">
+
+    <div class="filter-row">
+        <select id="yearSelect">
+            <option value="">Select Year</option>
+        </select>
+
+        <select id="monthSelect">
+            <option value="">Select Month</option>
+            <option>January</option><option>February</option><option>March</option>
+            <option>April</option><option>May</option><option>June</option>
+            <option>July</option><option>August</option><option>September</option>
+            <option>October</option><option>November</option><option>December</option>
+        </select>
+
+        <button id="searchBtn">Search</button>
+    </div>
+
+    <h3 id="monthYearDisplay" class="display-header">Select Month and Year</h3>
+
+    <div class="balance-card">
+        <span style="font-size: 0.9rem; text-transform: uppercase; font-weight: 700; color: #64748b; letter-spacing: 0.5px;">Monthly Balance</span>
+        <h2>$<span id="totalDisplay">0.00</span></h2>
+    </div>
+
+    <div class="data-grid">
+        <div class="data-row"><span>Gas</span><span>$<span id="gasDisplay">0.00</span></span></div>
+        <div class="data-row"><span>Electricity</span><span>$<span id="electricityDisplay">0.00</span></span></div>
+        <div class="data-row"><span>Water</span><span>$<span id="waterDisplay">0.00</span></span></div>
+        <div class="data-row"><span>Rent</span><span>$<span id="rentDisplay">0.00</span></span></div>
+        <div class="data-row"><span>Phone & Wifi</span><span>$<span id="phoneWifiDisplay">0.00</span></span></div>
+        <div class="data-row"><span>Cellphone</span><span>$<span id="cellphoneDisplay">0.00</span></span></div>
+        <div class="data-row"><span>Website</span><span>$<span id="websiteDisplay">0.00</span></span></div>
+        <div class="data-row"><span>Trash</span><span>$<span id="trashDisplay">0.00</span></span></div>
+        <div class="data-row"><span>Fees</span><span>$<span id="accountedFeesDisplay">0.00</span></span></div>
+        <div class="data-row"><span>Tax</span><span>$<span id="taxDisplay">0.00</span></span></div>
+        <div class="data-row"><span>Staff Salary</span><span>$<span id="salaryDisplay">0.00</span></span></div>
+        <div class="data-row"><span>Repairs</span><span>$<span id="repairDisplay">0.00</span></span></div>
+        <div class="data-row"><span>Supplies</span><span>$<span id="suppliesDisplay">0.00</span></span></div>
+        <div class="data-row"><span>Card Fees</span><span>$<span id="merchantFeesDisplay">0.00</span></span></div>
+        <div class="data-row"><span>Other</span><span>$<span id="otherDisplay">0.00</span></span></div>
+    </div>
+
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const yearSelect = document.getElementById("yearSelect");
+        const startYear = 2024;
+        const currentYear = new Date().getFullYear();
+
+        for (let year = startYear; year <= currentYear + 25; year++) {
+            const option = document.createElement("option");
+            option.value = year;
+            option.textContent = year;
+            yearSelect.appendChild(option);
+        }
+    });
+</script>
+
+<script src="ScriptPast.js"></script>
+</body>
+</html>

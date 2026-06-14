@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Charts</title>
+    <link rel="stylesheet" href="mystyle2.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .dashboard-stack { display: flex; flex-direction: column; gap: 24px; }
+        .split-row-container { display: flex; gap: 24px; align-items: stretch; }
+        .info-side-panel { flex: 1; display: flex; flex-direction: column; gap: 12px; justify-content: center; }
+        .chart-side-panel { flex: 2; }
+        .chart-side-container { display: flex; gap: 24px; align-items: center; justify-content: space-between; height: 300px; }
+        .pie-box { flex: 1; height: 100%; }
+        .list-box { flex: 1; height: 100%; overflow-y: auto; padding-right: 8px; }
+        .side-metric-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: var(--bg-card, #ffffff); border-radius: var(--radius-md, 8px); border: 1px solid var(--border-subtle, #e2e8f0); box-shadow: var(--shadow-sm); }
+        .side-metric-row label { font-size: 0.85rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted, #64748b); }
+        .side-metric-row .value { font-size: 1.2rem; font-weight: 800; font-family: ui-monospace, monospace; }
+        .breakdown-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px dashed #e2e8f0; font-size: 0.95rem; }
+        .breakdown-label { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+        .color-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+        .breakdown-amt { font-weight: 700; }
+        .chart-wrapper { height: 340px; position: relative; }
+        .text-success { color: #22c55e !important; }
+        .text-danger { color: #dc2626 !important; }
+        .text-indigo { color: #6366f1 !important; }
+        .text-rose { color: #f43f5e !important; }
+        @media (max-width: 900px) { .split-row-container { flex-direction: column; } }
+    </style>
+</head>
+<body>
+
+<h1>Charts</h1>
+
+<div class="grid-container">
+    <a href="Website.html" class="button">Home</a>
+    <a href="Chart.html" class="button">Chart</a>
+    <a href="Past.html" class="button">Past</a>
+    <a href="Insert Info.html" class="button">Insert Info</a>
+    <a href="Suggestion.html" class="button">Suggestion</a>
+</div>
+
+<div class="Past-info filter-card" style="gap: 8px !important; padding: 20px !important; margin-bottom: 24px !important;">
+    <select id="yearSelect" style="width: 160px; font-weight: 800; text-align: center;"></select>
+</div>
+
+<div class="dashboard-wrapper">
+    <div class="dashboard-stack">
+        <div class="split-row-container">
+            <div class="info-side-panel">
+                <div class="section-title" style="margin-bottom: 4px;">Summary</div>
+                <div class="side-metric-row"><label>Revenue</label><div class="value" id="summaryRevenue">$0</div></div>
+                <div class="side-metric-row"><label>Expenses</label><div class="value" id="summaryExpenses">$0</div></div>
+                <div class="side-metric-row"><label>Profit</label><div class="value" id="summaryProfit">$0</div></div>
+                <div class="side-metric-row"><label>Margin</label><div class="value" id="summaryMargin">0%</div></div>
+                <div class="side-metric-row" style="border-left: 4px solid #f43f5e;"><label>Predicted Expenses</label><div class="value text-rose" id="predictExpenses">$0</div></div>
+                <div class="side-metric-row" style="border-left: 4px solid #6366f1;"><label>Predicted Profit</label><div class="value" id="predictProfit">$0</div></div>
+            </div>
+            <div class="main-report-card chart-side-panel">
+                <div class="section-title">Predicted Profit Trend</div>
+                <div class="chart-wrapper"><canvas id="profitChart"></canvas></div>
+            </div>
+        </div>
+        <div class="main-report-card">
+            <div class="section-title">Income vs Expenses</div>
+            <div class="chart-wrapper"><canvas id="revExpChart"></canvas></div>
+        </div>
+        <div class="main-report-card">
+            <div class="section-title">Expense Breakdown</div>
+            <div class="chart-side-container">
+                <div class="pie-box"><canvas id="expensePieChart"></canvas></div>
+                <div class="list-box" id="expenseValueList"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="ScriptChart.js"></script>
+</body>
+</html>

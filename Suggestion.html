@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suggestion Dashboard</title>
+    <link rel="stylesheet" href="mystyle2.css">
+    <style>
+        .suggestion-dashboard-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 32px;
+            max-width: 950px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Fixed Top Split Layout */
+        .suggestion-input-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            align-items: start;
+        }
+
+        /* Fixed height prevents vertical container shifting */
+        .panel-height-lock {
+            height: 340px;
+            box-sizing: border-box;
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .suggestion-input-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .suggestion-input-panel input {
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+
+        /* BIGGER ANALYZE BUTTON */
+        .suggestion-input-panel button#submitBtn {
+            padding: 18px 24px;
+            background: #6366f1;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            margin-top: auto;
+            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .suggestion-input-panel button#submitBtn:hover {
+            background: #4f46e5;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 14px rgba(99, 102, 241, 0.3);
+        }
+
+        .summary-view-panel {
+            display: none;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .summary-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #0f172a;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 8px;
+            margin: 0;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .summary-row span:last-child {
+            color: #0f172a;
+            font-family: monospace;
+            font-weight: 700;
+        }
+
+        .return-action-btn {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: auto;
+        }
+
+        /* History Queue Styling */
+        .tested-items-panel {
+            overflow-y: auto;
+        }
+
+        .tested-items-panel h3 {
+            font-size: 16px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-top: 0;
+            margin-bottom: 16px;
+            border-bottom: 2px solid #6366f1;
+            padding-bottom: 6px;
+        }
+
+        .items-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .items-list li {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding: 14px;
+            background: #f8fafc;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .items-list li:hover {
+            background: #ffffff;
+            border-color: #6366f1;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.08);
+        }
+
+        .list-row-top, .list-row-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .list-badge {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 99px;
+            color: white;
+            text-transform: uppercase;
+        }
+
+        .badge-unviable { background-color: #dc2626; }
+        .badge-weak { background-color: #d97706; }
+        .badge-solid { background-color: #2563eb; }
+        .badge-elite { background-color: #16a34a; }
+
+        /* Permanent Base Layout Framework */
+        .analysis-results {
+            display: grid !important;
+            grid-template-columns: 1fr;
+            gap: 24px;
+            border-top: 2px solid #e2e8f0;
+            padding-top: 32px;
+            margin-top: 8px;
+        }
+
+        .suggestion-card-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .suggestion-stat-card {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+
+        .suggestion-stat-card label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: #64748b;
+            letter-spacing: 0.5px;
+        }
+
+        .suggestion-stat-card .amt-val {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-top: 8px;
+            font-family: monospace;
+        }
+
+        .price-optimization-box {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .optimized-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #334155;
+        }
+
+        .optimized-price {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #6366f1;
+            margin: 12px 0;
+            font-family: monospace;
+        }
+
+        .strategy-narrative-box {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-left: 6px solid #e2e8f0;
+            border-radius: 0 12px 12px 0;
+            padding: 24px;
+        }
+
+        .strategy-narrative-box h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            color: #0f172a;
+        }
+
+        .strategy-narrative-box p {
+            line-height: 1.6;
+            font-size: 1rem;
+            color: #475569;
+        }
+
+        @media (max-width: 768px) {
+            .suggestion-input-container, .suggestion-card-grid {
+                grid-template-columns: 1fr;
+            }
+            .panel-height-lock {
+                height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<h1>Suggestions</h1>
+
+<div class="grid-container">
+    <a href="Website.html" class="button">Home</a>
+    <a href="Chart.html" class="button">Chart</a>
+    <a href="Past.html" class="button">Past</a>
+    <a href="Insert Info.html" class="button">Insert Info</a>
+    <a href="Suggestion.html" class="button">Suggestion</a>
+</div>
+
+<div class="suggestion-dashboard-layout" id="dashboardLayout">
+
+    <div class="suggestion-input-container">
+        <div class="panel-height-lock suggestion-input-panel" id="inputFormPanel">
+            <label id="questionLabel" style="font-weight:800; color:#0f172a;">Check Menu Item Profit</label>
+            <input type="text" id="prodName" placeholder="Item Name (e.g., Burger)">
+            <input type="number" id="prodPrice" step="0.01" placeholder="Selling Price ($)">
+            <input type="number" id="prodIngredients" step="0.01" placeholder="Ingredients Cost ($)">
+            <input type="number" id="prodLabor" step="0.01" placeholder="Labor Cost ($)">
+            <button id="submitBtn">Analyze Item</button>
+        </div>
+
+        <div class="panel-height-lock summary-view-panel" id="inputSummaryView">
+            <h3 class="summary-title" id="sumItemName">Item Summary</h3>
+            <div class="summary-row"><span>Selling Price:</span><span id="sumPrice">$0.00</span></div>
+            <div class="summary-row"><span>Ingredients Cost:</span><span id="sumIngredients">$0.00</span></div>
+            <div class="summary-row"><span>Labor Cost:</span><span id="sumLabor">$0.00</span></div>
+            <button class="return-action-btn" id="returnInputsBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+                Back
+            </button>
+        </div>
+
+        <div class="panel-height-lock tested-items-panel">
+            <h3>Tested Items</h3>
+            <ul id="itemsHistoryList" class="items-list"></ul>
+        </div>
+    </div>
+
+    <div class="analysis-results" id="outputBlock">
+        <div class="suggestion-card-grid">
+            <div class="suggestion-stat-card">
+                <label>Total Cost</label>
+                <div class="amt-val" id="valTotalCost">--</div>
+            </div>
+            <div class="suggestion-stat-card">
+                <label>Net Profit</label>
+                <div class="amt-val" id="valNetProfit">--</div>
+            </div>
+            <div class="suggestion-stat-card">
+                <label>Margin</label>
+                <div class="amt-val" id="valMargin">--</div>
+            </div>
+            <div class="suggestion-stat-card">
+                <label>Status</label>
+                <div style="margin-top: 10px;"><span id="valBadge" class="list-badge" style="background:#64748b;">Awaiting Data</span></div>
+            </div>
+        </div>
+
+        <div class="price-optimization-box" id="pricingCard">
+            <div class="optimized-title" id="pricingTitle">Recommended Pricing Guidance</div>
+            <div class="optimized-price" id="valRecommendedPrice">--</div>
+            <p id="pricingSubtext" style="font-size: 13px; font-weight: 600; color: #64748b; margin: 0;"></p>
+        </div>
+
+        <div class="strategy-narrative-box" id="narrativeBlock">
+            <h3>Strategic Suggestions</h3>
+            <p id="valAdviceText" style="margin: 0;">Please execute an analysis request or select a saved item above to generate metrics summary breakdown panels.</p>
+        </div>
+    </div>
+
+</div>
+
+<script src="ScriptSuggestion.js"></script>
+</body>
+</html>
