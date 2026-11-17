@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,113 +6,303 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Past Records</title>
     <link rel="stylesheet" href="mystyle2.css">
+
     <style>
-        .past-dashboard-container {
-            width: 100%;
-            max-width: 900px;
+        .past-container {
+            width: 94%;
+            max-width: 1250px;
             margin: 30px auto;
-            background: #ffffff;
-            padding: 36px;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
         }
 
-        .filter-row {
+        .past-header {
+            margin-bottom: 22px;
+        }
+
+        .past-header h2 {
+            color: #0f172a;
+            margin-bottom: 6px;
+        }
+
+        .past-header p {
+            color: #64748b;
+            margin: 0;
+        }
+
+        .filter-card {
             display: flex;
-            gap: 16px;
-            margin-bottom: 24px;
-            justify-content: center;
+            align-items: end;
+            gap: 15px;
+            flex-wrap: wrap;
+            padding: 22px;
+            margin-bottom: 22px;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            box-shadow: 0 4px 18px rgba(15, 23, 42, .04);
         }
 
-        .filter-row select {
-            width: 200px;
+        .filter-field {
+            flex: 1;
+            min-width: 160px;
+        }
+
+        .filter-field label {
+            display: block;
+            margin-bottom: 8px;
+            color: #334155;
+            font-weight: 700;
+        }
+
+        .filter-field select {
+            width: 100%;
+            box-sizing: border-box;
             padding: 12px;
-            border-radius: 8px;
             border: 1px solid #cbd5e1;
-            font-weight: 600;
-            font-size: 0.95rem;
+            border-radius: 8px;
+            background: white;
+            font-size: .95rem;
         }
 
-        .filter-row button {
-            padding: 12px 28px;
-            border-radius: 8px;
-            background-color: #0f172a;
-            color: white;
+        #searchBtn {
+            min-width: 130px;
+            padding: 13px 22px;
             border: none;
+            border-radius: 8px;
+            background: #0f172a;
+            color: white;
             font-weight: 700;
             cursor: pointer;
-            font-size: 0.95rem;
-            transition: background 0.2s;
         }
 
-        .filter-row button:hover {
-            background-color: #1e293b;
+        #searchBtn:hover {
+            background: #1e293b;
         }
 
         .display-header {
-            text-align: center;
-            font-size: 1.4rem;
+            margin: 25px 0 18px;
             color: #0f172a;
-            margin: 20px 0;
-            padding-bottom: 12px;
-            border-bottom: 2px solid #e2e8f0;
+            font-size: 1.35rem;
         }
 
-        .balance-card {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 28px;
-            text-align: center;
-        }
-
-        .balance-card h2 {
-            margin: 4px 0 0 0;
-            font-size: 2.2rem;
-            color: #0f172a;
-        }
-
-        .data-grid {
+        .summary-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 0 40px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 22px;
         }
 
-        .data-row {
+        .summary-card {
+            padding: 20px;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 13px;
+            box-shadow: 0 4px 18px rgba(15, 23, 42, .04);
+        }
+
+        .summary-card span {
+            display: block;
+            margin-bottom: 9px;
+            color: #64748b;
+            font-size: .83rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+        }
+
+        .summary-card strong {
+            color: #0f172a;
+            font-size: 1.55rem;
+            font-family: monospace;
+        }
+
+        .records-grid {
+            display: grid;
+            grid-template-columns: minmax(280px, .85fr) minmax(0, 1.5fr);
+            gap: 20px;
+            align-items: start;
+        }
+
+        .records-card {
+            min-width: 0;
+            padding: 22px;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            box-shadow: 0 4px 18px rgba(15, 23, 42, .04);
+        }
+
+        .records-card h3 {
+            margin: 0 0 6px;
+            color: #0f172a;
+            font-size: 1.1rem;
+        }
+
+        .section-description {
+            margin: 0 0 18px;
+            color: #64748b;
+            font-size: .88rem;
+        }
+
+        .expense-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .expense-row {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            gap: 12px;
             padding: 12px 0;
-            border-bottom: 1px dashed #e2e8f0;
-            font-size: 1rem;
+            border-bottom: 1px solid #eef2f7;
             color: #334155;
         }
 
-        .data-row span:first-child {
-            font-weight: 600;
-        }
-
-        .data-row span:last-child {
+        .expense-row span:last-child {
+            color: #0f172a;
             font-family: monospace;
             font-weight: 700;
-            font-size: 1.05rem;
+            white-space: nowrap;
         }
 
-        @media (max-width: 768px) {
-            .data-grid {
+        .expense-total {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 12px;
+            padding-top: 16px;
+            border-top: 2px solid #e2e8f0;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .expense-total span:last-child {
+            font-family: monospace;
+            white-space: nowrap;
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .earnings-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 480px;
+            text-align: right;
+        }
+
+        .earnings-table th {
+            padding: 13px 12px;
+            background: #f8fafc;
+            color: #475569;
+            font-size: .82rem;
+            text-transform: uppercase;
+            letter-spacing: .3px;
+        }
+
+        .earnings-table td {
+            padding: 13px 12px;
+            border-bottom: 1px solid #eef2f7;
+            color: #334155;
+            font-size: .93rem;
+            font-family: monospace;
+        }
+
+        .earnings-table th:first-child,
+        .earnings-table td:first-child {
+            text-align: left;
+            font-family: inherit;
+        }
+
+        .earnings-table tfoot td {
+            background: #f8fafc;
+            border-top: 2px solid #e2e8f0;
+            color: #0f172a;
+            font-weight: 800;
+        }
+
+        .monthly-balance {
+            margin-top: 22px;
+            padding: 25px;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            box-shadow: 0 4px 18px rgba(15, 23, 42, .04);
+        }
+
+        .monthly-balance h3 {
+            margin: 0 0 17px;
+            color: #0f172a;
+        }
+
+        .balance-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 10px 0;
+            color: #475569;
+        }
+
+        .balance-row strong {
+            color: #0f172a;
+            font-family: monospace;
+        }
+
+        .final-balance {
+            margin-top: 10px;
+            padding-top: 18px;
+            border-top: 2px solid #e2e8f0;
+            font-size: 1.15rem;
+            font-weight: 800;
+        }
+
+        .final-balance strong {
+            font-size: 1.5rem;
+        }
+
+        .positive {
+            color: #15803d !important;
+        }
+
+        .negative {
+            color: #dc2626 !important;
+        }
+
+        .empty-message {
+            padding: 20px;
+            text-align: center;
+            color: #64748b;
+            background: #f8fafc;
+            border-radius: 9px;
+        }
+
+        @media (max-width: 850px) {
+            .records-grid {
                 grid-template-columns: 1fr;
             }
-            .filter-row {
-                flex-direction: column;
-                align-items: center;
+        }
+
+        @media (max-width: 650px) {
+            .summary-grid {
+                grid-template-columns: 1fr;
             }
-            .filter-row select, .filter-row button {
+
+            .filter-card {
+                align-items: stretch;
+            }
+
+            #searchBtn {
                 width: 100%;
+            }
+
+            .records-card {
+                padding: 17px;
             }
         }
     </style>
 </head>
+
 <body>
 
 <h1>Past Data</h1>
@@ -124,65 +315,164 @@
     <a href="Suggestion.html" class="button">Suggestion</a>
 </div>
 
-<div class="past-dashboard-container">
+<div class="past-container">
 
-    <div class="filter-row">
-        <select id="yearSelect">
-            <option value="">Select Year</option>
-        </select>
-
-        <select id="monthSelect">
-            <option value="">Select Month</option>
-            <option>January</option><option>February</option><option>March</option>
-            <option>April</option><option>May</option><option>June</option>
-            <option>July</option><option>August</option><option>September</option>
-            <option>October</option><option>November</option><option>December</option>
-        </select>
-
-        <button id="searchBtn">Search</button>
+    <div class="past-header">
+        <h2>Monthly Financial Records</h2>
+        <p>Review income, expenses, and your monthly balance.</p>
     </div>
 
-    <h3 id="monthYearDisplay" class="display-header">Select Month and Year</h3>
+    <div class="filter-card">
+        <div class="filter-field">
+            <label for="yearSelect">Year</label>
+            <select id="yearSelect">
+                <option value="">Select Year</option>
+            </select>
+        </div>
 
-    <div class="balance-card">
-        <span style="font-size: 0.9rem; text-transform: uppercase; font-weight: 700; color: #64748b; letter-spacing: 0.5px;">Monthly Balance</span>
-        <h2>$<span id="totalDisplay">0.00</span></h2>
+        <div class="filter-field">
+            <label for="monthSelect">Month</label>
+            <select id="monthSelect">
+                <option value="">Select Month</option>
+                <option>January</option>
+                <option>February</option>
+                <option>March</option>
+                <option>April</option>
+                <option>May</option>
+                <option>June</option>
+                <option>July</option>
+                <option>August</option>
+                <option>September</option>
+                <option>October</option>
+                <option>November</option>
+                <option>December</option>
+            </select>
+        </div>
+
+        <button id="searchBtn">Search Records</button>
     </div>
 
-    <div class="data-grid">
-        <div class="data-row"><span>Gas</span><span>$<span id="gasDisplay">0.00</span></span></div>
-        <div class="data-row"><span>Electricity</span><span>$<span id="electricityDisplay">0.00</span></span></div>
-        <div class="data-row"><span>Water</span><span>$<span id="waterDisplay">0.00</span></span></div>
-        <div class="data-row"><span>Rent</span><span>$<span id="rentDisplay">0.00</span></span></div>
-        <div class="data-row"><span>Phone & Wifi</span><span>$<span id="phoneWifiDisplay">0.00</span></span></div>
-        <div class="data-row"><span>Cellphone</span><span>$<span id="cellphoneDisplay">0.00</span></span></div>
-        <div class="data-row"><span>Website</span><span>$<span id="websiteDisplay">0.00</span></span></div>
-        <div class="data-row"><span>Trash</span><span>$<span id="trashDisplay">0.00</span></span></div>
-        <div class="data-row"><span>Fees</span><span>$<span id="accountedFeesDisplay">0.00</span></span></div>
-        <div class="data-row"><span>Tax</span><span>$<span id="taxDisplay">0.00</span></span></div>
-        <div class="data-row"><span>Staff Salary</span><span>$<span id="salaryDisplay">0.00</span></span></div>
-        <div class="data-row"><span>Repairs</span><span>$<span id="repairDisplay">0.00</span></span></div>
-        <div class="data-row"><span>Supplies</span><span>$<span id="suppliesDisplay">0.00</span></span></div>
-        <div class="data-row"><span>Card Fees</span><span>$<span id="merchantFeesDisplay">0.00</span></span></div>
-        <div class="data-row"><span>Other</span><span>$<span id="otherDisplay">0.00</span></span></div>
+    <h2 id="monthYearDisplay" class="display-header">Select a Month and Year</h2>
+
+    <div class="summary-grid">
+        <div class="summary-card">
+            <span>Total Earnings</span>
+            <strong id="earningsSummary">$0.00</strong>
+        </div>
+
+        <div class="summary-card">
+            <span>Total Expenses</span>
+            <strong id="expensesSummary">$0.00</strong>
+        </div>
+
+        <div class="summary-card">
+            <span>Monthly Balance</span>
+            <strong id="balanceSummary">$0.00</strong>
+        </div>
     </div>
+
+    <div class="records-grid">
+
+        <section class="records-card">
+            <h3>Expenses by Category</h3>
+            <p class="section-description">Monthly spending breakdown</p>
+
+            <div class="expense-list">
+                <div class="expense-row"><span>Gas</span><span id="gasDisplay">$0.00</span></div>
+                <div class="expense-row"><span>Electricity</span><span id="electricityDisplay">$0.00</span></div>
+                <div class="expense-row"><span>Water</span><span id="waterDisplay">$0.00</span></div>
+                <div class="expense-row"><span>Rent</span><span id="rentDisplay">$0.00</span></div>
+                <div class="expense-row"><span>Phone & Wifi</span><span id="phoneWifiDisplay">$0.00</span></div>
+                <div class="expense-row"><span>Cellphone</span><span id="cellphoneDisplay">$0.00</span></div>
+                <div class="expense-row"><span>Website</span><span id="websiteDisplay">$0.00</span></div>
+                <div class="expense-row"><span>Trash</span><span id="trashDisplay">$0.00</span></div>
+                <div class="expense-row"><span>Accounted Fees</span><span id="accountedFeesDisplay">$0.00</span></div>
+                <div class="expense-row"><span>Tax</span><span id="taxDisplay">$0.00</span></div>
+                <div class="expense-row"><span>Staff Salary</span><span id="salaryDisplay">$0.00</span></div>
+                <div class="expense-row"><span>Repairs</span><span id="repairDisplay">$0.00</span></div>
+                <div class="expense-row"><span>Supplies</span><span id="suppliesDisplay">$0.00</span></div>
+                <div class="expense-row"><span>Merchant Fees</span><span id="merchantFeesDisplay">$0.00</span></div>
+                <div class="expense-row"><span>Other</span><span id="otherDisplay">$0.00</span></div>
+            </div>
+
+            <div class="expense-total">
+                <span>Total Expenses</span>
+                <span id="totalExpensesDisplay">$0.00</span>
+            </div>
+        </section>
+
+        <section class="records-card">
+            <h3>Daily Earnings</h3>
+            <p class="section-description">Daily cash, credit, and tips records</p>
+
+            <div class="table-wrapper">
+                <table class="earnings-table">
+                    <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Cash</th>
+                        <th>Credit</th>
+                        <th>Tips</th>
+                        <th>Total</th>
+                    </tr>
+                    </thead>
+
+                    <tbody id="earningsTableBody">
+                    <tr>
+                        <td colspan="5">No records found.</td>
+                    </tr>
+                    </tbody>
+
+                    <tfoot>
+                    <tr>
+                        <td>Monthly Total</td>
+                        <td id="cashTotal">$0.00</td>
+                        <td id="creditTotal">$0.00</td>
+                        <td id="tipsTotal">$0.00</td>
+                        <td id="dailyEarningsTotal">$0.00</td>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </section>
+
+    </div>
+
+    <section class="monthly-balance">
+        <h3>Monthly Summary</h3>
+
+        <div class="balance-row">
+            <span>Total Cash</span>
+            <strong id="summaryCash">$0.00</strong>
+        </div>
+
+        <div class="balance-row">
+            <span>Total Credit</span>
+            <strong id="summaryCredit">$0.00</strong>
+        </div>
+
+        <div class="balance-row">
+            <span>Total Tips</span>
+            <strong id="summaryTips">$0.00</strong>
+        </div>
+
+        <div class="balance-row">
+            <span>Total Earnings</span>
+            <strong id="summaryEarnings">$0.00</strong>
+        </div>
+
+        <div class="balance-row">
+            <span>Total Expenses</span>
+            <strong id="summaryExpenses">$0.00</strong>
+        </div>
+
+        <div class="balance-row final-balance">
+            <span>Final Monthly Balance</span>
+            <strong id="finalBalance">$0.00</strong>
+        </div>
+    </section>
 
 </div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const yearSelect = document.getElementById("yearSelect");
-        const startYear = 2024;
-        const currentYear = new Date().getFullYear();
-
-        for (let year = startYear; year <= currentYear + 25; year++) {
-            const option = document.createElement("option");
-            option.value = year;
-            option.textContent = year;
-            yearSelect.appendChild(option);
-        }
-    });
-</script>
 
 <script src="ScriptPast.js"></script>
 </body>
