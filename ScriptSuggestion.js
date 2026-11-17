@@ -1,23 +1,22 @@
+
 document.addEventListener("DOMContentLoaded", () => {
+
     const submitBtn = document.getElementById("submitBtn");
     const returnInputsBtn = document.getElementById("returnInputsBtn");
     const inputFormPanel = document.getElementById("inputFormPanel");
     const inputSummaryView = document.getElementById("inputSummaryView");
     const itemsHistoryList = document.getElementById("itemsHistoryList");
 
-    // Form Inputs
     const prodName = document.getElementById("prodName");
     const prodPrice = document.getElementById("prodPrice");
     const prodIngredients = document.getElementById("prodIngredients");
     const prodLabor = document.getElementById("prodLabor");
 
-    // Summary View Elements
     const sumItemName = document.getElementById("sumItemName");
     const sumPrice = document.getElementById("sumPrice");
     const sumIngredients = document.getElementById("sumIngredients");
     const sumLabor = document.getElementById("sumLabor");
 
-    // UI Outputs
     const valTotalCost = document.getElementById("valTotalCost");
     const valNetProfit = document.getElementById("valNetProfit");
     const valMargin = document.getElementById("valMargin");
@@ -30,217 +29,414 @@ document.addEventListener("DOMContentLoaded", () => {
     const valAdviceText = document.getElementById("valAdviceText");
     const narrativeBlock = document.getElementById("narrativeBlock");
 
-    const currentUser = localStorage.getItem("currentUser") || "guest";
-    const historyStorageKey = `testedItems_${currentUser.toLowerCase()}`;
-    const userStorageKey = `records_${currentUser.toLowerCase()}`;
+    const currentUser = (localStorage.getItem("currentUser") || "guest").toLowerCase();
 
-    const expenseKeys = [
-        "gas", "electricity", "water", "rent", "phoneWifi", "cellphone",
-        "website", "trash", "accountedFees", "tax", "salary", "repair",
-        "supplies", "merchantFees", "other"
-    ];
+    const historyStorageKey = `testedItems_${currentUser}`;
+    const TARGET_MARGIN = 35;
 
-    renderTestedItemsList();
+    function readSavedItems() {
+        try {
+            const saved = JSON.parse(localStorage.getItem(historyStorageKey) || "[]");
+            return Array.isArray(saved) ? saved : [];
+        } catch (error) {
+            console.error("Could not read saved items:", error);
+            return [];
+        }
+    }
 
-    function calculateItemMetrics(currentPrice, ingredients, labor) {
-        const records = JSON.parse(localStorage.getItem(userStorageKey)) || [];
-        let allocatedOverhead = 0;
+    function formatMoney(value) {
+        return new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: "USD"
+        }).format(value);
+    }
 
-        if (records.length > 0) {
-            let grandTotalOverhead = 0;
-            let activeRecordCount = 0;
+    function getNumber(input, label, allowZero) {
 
-            records.forEach(match => {
-                const entries = match.entries || [];
-                let monthOverhead = 0;
-                entries.forEach(e => {
-                    if (e.bills) {
-                        expenseKeys.forEach(key => {
-                            monthOverhead += Number(e.bills[key] || 0);
-                        });
-                    }
-                });
-                if (monthOverhead > 0) {
-                    grandTotalOverhead += monthOverhead;
-                    activeRecordCount++;
-                }
-            });
+        const rawValue = input.value.trim();
 
-            if (activeRecordCount > 0) {
-                const averageMonthlyOverhead = grandTotalOverhead / activeRecordCount;
-                allocatedOverhead = averageMonthlyOverhead / 1000;
-            }
+        if (rawValue === "") {
+            alert(`Please enter ${label}.`);
+            input.focus();
+            return null;
         }
 
-        const directCost = ingredients + labor;
-        const totalTrueCost = directCost + allocatedOverhead;
-        const netProfit = currentPrice - totalTrueCost;
-        const currentMargin = currentPrice > 0 ? (netProfit / currentPrice) * 100 : 0;
+        const value = Number(rawValue);
 
-        const idealTargetMargin = 35;
-        let recommendedCustomerPrice = totalTrueCost / (1 - (idealTargetMargin / 100));
+        if (
+            !Number.isFinite(value) ||
+            value < 0 ||
+            (!allowZero && value === 0)
+        ) {
+            alert(`Please enter a valid ${label}.`);
+            input.focus();
+            return null;
+        }
+
+        return value;
+    }
+
+    function calculateItemMetrics(currentPrice, ingredients, labor) {
+
+        const totalCost = ingredients + labor;
+
+        const profit = currentPrice - totalCost;
+
+        const margin = (profit / currentPrice) * 100;
+
+        const recommendedPrice = totalCost / (1 - TARGET_MARGIN / 100);
 
         let badgeClass = "badge-solid";
-        let statusLabel = "Solid Performance";
+        let statusLabel = "On Target";
         let borderHighlight = "#2563eb";
 
-        if (netProfit <= 0) {
+        if (profit <= 0) {
+
             badgeClass = "badge-unviable";
-            statusLabel = "Unviable Item";
+            statusLabel = "Losing Money";
             borderHighlight = "#dc2626";
-        } else if (currentMargin < 20) {
+
+        } else if (margin < 20) {
+
             badgeClass = "badge-weak";
             statusLabel = "Weak Margin";
             borderHighlight = "#d97706";
-        } else if (currentMargin >= 40) {
+
+        } else if (margin < TARGET_MARGIN) {
+
+            badgeClass = "badge-improve";
+            statusLabel = "Needs Improvement";
+            borderHighlight = "#64748b";
+
+        } else if (margin >= 40) {
+
             badgeClass = "badge-elite";
-            statusLabel = "Elite Margin";
+            statusLabel = "Strong Margin";
             borderHighlight = "#16a34a";
         }
 
         return {
-            totalTrueCost, netProfit, currentMargin, recommendedCustomerPrice,
-            badgeClass, statusLabel, borderHighlight, allocatedOverhead, directCost
+            totalCost,
+            profit,
+            margin,
+            recommendedPrice,
+            badgeClass,
+            statusLabel,
+            borderHighlight
         };
     }
 
     function executeAnalysis() {
+
         const name = prodName.value.trim() || "Selected Menu Item";
-        const currentPrice = parseFloat(prodPrice.value) || 0;
-        const ingredients = parseFloat(prodIngredients.value) || 0;
-        const labor = parseFloat(prodLabor.value) || 0;
 
-        if (currentPrice <= 0) {
-            alert("Please enter a valid current selling price.");
-            return;
-        }
+        const currentPrice = getNumber(
+            prodPrice,
+            "a selling price greater than $0",
+            false
+        );
 
-        const metrics = calculateItemMetrics(currentPrice, ingredients, labor);
+        if (currentPrice === null) return;
 
-        valTotalCost.textContent = `$${metrics.totalTrueCost.toFixed(2)}`;
-        valNetProfit.textContent = `$${metrics.netProfit.toFixed(2)}`;
-        valMargin.textContent = `${metrics.currentMargin.toFixed(1)}%`;
+        const ingredients = getNumber(
+            prodIngredients,
+            "an ingredient cost (zero is allowed)",
+            true
+        );
+
+        if (ingredients === null) return;
+
+        const labor = getNumber(
+            prodLabor,
+            "a labor cost (zero is allowed)",
+            true
+        );
+
+        if (labor === null) return;
+
+        const metrics = calculateItemMetrics(
+            currentPrice,
+            ingredients,
+            labor
+        );
+
+        valTotalCost.textContent = formatMoney(metrics.totalCost);
+
+        valNetProfit.textContent = formatMoney(metrics.profit);
+
+        valMargin.textContent = `${metrics.margin.toFixed(1)}%`;
 
         pricingCard.style.borderColor = metrics.borderHighlight;
+
         narrativeBlock.style.borderLeftColor = metrics.borderHighlight;
 
-        pricingTitle.textContent = "Pricing Assessment Status";
-        valRecommendedPrice.textContent = metrics.netProfit > 0 ? "Keep Current Price" : `$${metrics.recommendedCustomerPrice.toFixed(2)}`;
-        pricingSubtext.textContent = `Direct Input Costs: $${metrics.directCost.toFixed(2)} | Calculated Overhead allocation: $${metrics.allocatedOverhead.toFixed(2)}`;
+        pricingTitle.textContent = `Price for a ${TARGET_MARGIN}% Profit Margin`;
 
-        valAdviceText.innerHTML = `<strong>Data Tracking Analysis for ${name}:</strong><br>
-        Your manual ingredient and labor inputs are $${metrics.directCost.toFixed(2)}. The tracking engine added $${metrics.allocatedOverhead.toFixed(2)} to account for shared backend operational bills.
-        This brings your total true expense weight to <strong>$${metrics.totalTrueCost.toFixed(2)}</strong>, leaving a clear net profit return of <strong>$${metrics.netProfit.toFixed(2)}</strong> per transaction (${metrics.currentMargin.toFixed(1)}% profit margin).`;
+        if (metrics.margin >= TARGET_MARGIN) {
+
+            valRecommendedPrice.textContent = `Keep ${formatMoney(currentPrice)}`;
+
+            pricingSubtext.textContent =
+                `Your current margin is ${metrics.margin.toFixed(1)}%, which meets the ${TARGET_MARGIN}% target before overhead.`;
+
+        } else {
+
+            valRecommendedPrice.textContent = formatMoney(metrics.recommendedPrice);
+
+            pricingSubtext.textContent =
+                `Estimated selling price needed to reach a ${TARGET_MARGIN}% margin before overhead.`;
+        }
 
         valBadge.textContent = metrics.statusLabel;
+
         valBadge.className = `list-badge ${metrics.badgeClass}`;
 
         sumItemName.textContent = name;
-        sumPrice.textContent = `$${currentPrice.toFixed(2)}`;
-        sumIngredients.textContent = `$${ingredients.toFixed(2)}`;
-        sumLabor.textContent = `$${labor.toFixed(2)}`;
+
+        sumPrice.textContent = formatMoney(currentPrice);
+
+        sumIngredients.textContent = formatMoney(ingredients);
+
+        sumLabor.textContent = formatMoney(labor);
+
+        valAdviceText.textContent = buildAdviceText(
+            name,
+            metrics,
+            currentPrice
+        );
 
         inputFormPanel.style.display = "none";
+
         inputSummaryView.style.display = "flex";
 
-        saveTestedItem(name, currentPrice, ingredients, labor);
+        saveTestedItem(
+            name,
+            currentPrice,
+            ingredients,
+            labor
+        );
     }
 
-    submitBtn.addEventListener("click", executeAnalysis);
+    function buildAdviceText(name, metrics, currentPrice) {
 
-    // CLEARING DATA ON BACK/CLEAR BUTTON PRESS
-    returnInputsBtn.addEventListener("click", () => {
-        inputSummaryView.style.display = "none";
-        inputFormPanel.style.display = "flex";
+        let advice = `${name}: your ingredient cost is ${formatMoney(metrics.totalCost - getCurrentLabor())} and your labor cost is ${formatMoney(getCurrentLabor())}. `;
 
-        // Reset top form variables
-        prodName.value = "";
-        prodPrice.value = "";
-        prodIngredients.value = "";
-        prodLabor.value = "";
+        advice += `Your combined direct cost is ${formatMoney(metrics.totalCost)} per item. `;
 
-        // Reset bottom output fields cleanly back to N/A/empty states
-        valTotalCost.textContent = "--";
-        valNetProfit.textContent = "--";
-        valMargin.textContent = "--";
-        valBadge.textContent = "Awaiting Data";
-        valBadge.className = "list-badge";
-        valBadge.style.backgroundColor = "#64748b";
+        advice += `At your current selling price of ${formatMoney(currentPrice)}, your estimated profit before overhead is ${formatMoney(metrics.profit)} per item. `;
 
-        valRecommendedPrice.textContent = "--";
-        pricingTitle.textContent = "Recommended Pricing Guidance";
-        pricingSubtext.textContent = "";
+        advice += `Your profit margin before overhead is ${metrics.margin.toFixed(1)}%. `;
 
-        pricingCard.style.borderColor = "#e2e8f0";
-        narrativeBlock.style.borderLeftColor = "#e2e8f0";
-        valAdviceText.innerHTML = "Please execute an analysis request or select a saved item above to generate metrics summary breakdown panels.";
-    });
+        if (metrics.margin >= TARGET_MARGIN) {
 
-    function saveTestedItem(name, rawPrice, rawIng, rawLab) {
-        let items = JSON.parse(localStorage.getItem(historyStorageKey)) || [];
-        const itemIndex = items.findIndex(item => item.name.toLowerCase() === name.toLowerCase());
+            advice += `Your current price meets the ${TARGET_MARGIN}% target based on ingredient and labor costs.`;
+
+        } else {
+
+            advice += `To reach a ${TARGET_MARGIN}% profit margin before overhead, the estimated selling price is ${formatMoney(metrics.recommendedPrice)}.`;
+        }
+
+        advice += " ";
+
+        advice += "Important: this calculation does not include rent, utilities, taxes, supplies, or other shared business expenses. Actual profit after all expenses will be lower. The suggested price is a starting point, not a guarantee of sales.";
+
+        return advice;
+    }
+
+    function getCurrentLabor() {
+        return Number(prodLabor.value) || 0;
+    }
+
+    function saveTestedItem(name, rawPrice, rawIngredients, rawLabor) {
+
+        const items = readSavedItems();
+
+        const itemIndex = items.findIndex(item =>
+            item &&
+            typeof item.name === "string" &&
+            item.name.toLowerCase() === name.toLowerCase()
+        );
 
         const itemPayload = {
             name,
-            rawPrice: Number(rawPrice) || 0,
-            rawIngredients: Number(rawIng) || 0,
-            rawLabor: Number(rawLab) || 0
+            rawPrice,
+            rawIngredients,
+            rawLabor
         };
 
-        if (itemIndex > -1) {
+        if (itemIndex >= 0) {
+
             items[itemIndex] = itemPayload;
+
         } else {
+
             items.push(itemPayload);
         }
 
-        localStorage.setItem(historyStorageKey, JSON.stringify(items));
+        try {
+
+            localStorage.setItem(
+                historyStorageKey,
+                JSON.stringify(items)
+            );
+
+        } catch (error) {
+
+            console.error("Could not save tested item:", error);
+
+            alert("The analysis worked, but this item could not be saved.");
+        }
+
         renderTestedItemsList();
     }
 
     function renderTestedItemsList() {
-        itemsHistoryList.innerHTML = "";
-        let items = JSON.parse(localStorage.getItem(historyStorageKey)) || [];
+
+        itemsHistoryList.replaceChildren();
+
+        const items = readSavedItems();
 
         if (items.length === 0) {
-            itemsHistoryList.innerHTML = `<li style="color: #64748b; font-style: italic; text-align: center; background: none; border: none; cursor: default; padding: 24px 0;">No items tested yet</li>`;
+
+            const emptyItem = document.createElement("li");
+
+            emptyItem.textContent = "No items tested yet";
+
+            emptyItem.style.cssText =
+                "color:#64748b;font-style:italic;text-align:center;background:none;border:none;cursor:default;padding:24px 0;";
+
+            itemsHistoryList.appendChild(emptyItem);
+
             return;
         }
 
         items.forEach(item => {
-            const metrics = calculateItemMetrics(item.rawPrice, item.rawIngredients, item.rawLabor);
+
+            if (!item || typeof item.name !== "string") return;
+
+            const price = Number(item.rawPrice);
+            const ingredients = Number(item.rawIngredients);
+            const labor = Number(item.rawLabor);
+
+            if (
+                !Number.isFinite(price) ||
+                price <= 0 ||
+                !Number.isFinite(ingredients) ||
+                ingredients < 0 ||
+                !Number.isFinite(labor) ||
+                labor < 0
+            ) {
+                return;
+            }
+
+            const metrics = calculateItemMetrics(
+                price,
+                ingredients,
+                labor
+            );
+
             const li = document.createElement("li");
-            li.setAttribute("data-name", item.name);
-            li.setAttribute("data-price", item.rawPrice || 0);
-            li.setAttribute("data-ingredients", item.rawIngredients || 0);
-            li.setAttribute("data-labor", item.rawLabor || 0);
 
-            const isUnviable = metrics.statusLabel === "Unviable Item" || metrics.currentMargin <= 0;
-            const marginColor = isUnviable ? "#dc2626" : "#475569";
+            const top = document.createElement("div");
+            top.className = "list-row-top";
 
-            li.innerHTML = `
-                <div class="list-row-top">
-                    <strong style="font-size: 14px; color: #0f172a;">${item.name}</strong>
-                    <span class="list-badge ${metrics.badgeClass}">${metrics.statusLabel}</span>
-                </div>
-                <div class="list-row-bottom" style="margin-top: 6px;">
-                    <span style="font-size: 12px; font-weight: 700; color: ${marginColor};">
-                        Margin: ${metrics.currentMargin.toFixed(1)}%
-                    </span>
-                    <span style="font-size: 12px; font-weight: 700; color: #2563eb;">
-                        Price: $${item.rawPrice.toFixed(2)}
-                    </span>
-                </div>
-            `;
+            const itemName = document.createElement("strong");
 
-            li.addEventListener("click", function() {
-                prodName.value = this.getAttribute("data-name");
-                prodPrice.value = this.getAttribute("data-price");
-                prodIngredients.value = this.getAttribute("data-ingredients");
-                prodLabor.value = this.getAttribute("data-labor");
+            itemName.style.cssText =
+                "font-size:14px;color:#0f172a;";
+
+            itemName.textContent = item.name;
+
+            const badge = document.createElement("span");
+
+            badge.className = `list-badge ${metrics.badgeClass}`;
+
+            badge.textContent = metrics.statusLabel;
+
+            top.append(itemName, badge);
+
+            const bottom = document.createElement("div");
+
+            bottom.className = "list-row-bottom";
+
+            bottom.style.marginTop = "6px";
+
+            const margin = document.createElement("span");
+
+            margin.style.cssText =
+                "font-size:12px;font-weight:700;color:#475569;";
+
+            margin.textContent = `Margin: ${metrics.margin.toFixed(1)}%`;
+
+            const itemPrice = document.createElement("span");
+
+            itemPrice.style.cssText =
+                "font-size:12px;font-weight:700;color:#2563eb;";
+
+            itemPrice.textContent = `Price: ${formatMoney(price)}`;
+
+            bottom.append(margin, itemPrice);
+
+            li.append(top, bottom);
+
+            li.addEventListener("click", () => {
+
+                prodName.value = item.name;
+
+                prodPrice.value = price;
+
+                prodIngredients.value = ingredients;
+
+                prodLabor.value = labor;
+
+                inputSummaryView.style.display = "none";
+
+                inputFormPanel.style.display = "flex";
+
                 executeAnalysis();
             });
 
             itemsHistoryList.appendChild(li);
         });
     }
+
+    function resetAnalysisView() {
+
+        inputSummaryView.style.display = "none";
+
+        inputFormPanel.style.display = "flex";
+
+        prodName.value = "";
+        prodPrice.value = "";
+        prodIngredients.value = "";
+        prodLabor.value = "";
+
+        valTotalCost.textContent = "--";
+        valNetProfit.textContent = "--";
+        valMargin.textContent = "--";
+
+        valBadge.textContent = "Awaiting Data";
+        valBadge.className = "list-badge";
+        valBadge.style.backgroundColor = "#64748b";
+
+        valRecommendedPrice.textContent = "--";
+
+        pricingTitle.textContent = "Recommended Pricing Guidance";
+
+        pricingSubtext.textContent = "";
+
+        pricingCard.style.borderColor = "#e2e8f0";
+
+        narrativeBlock.style.borderLeftColor = "#e2e8f0";
+
+        valAdviceText.textContent =
+            "Enter an item's costs and selling price to generate a pricing assessment.";
+    }
+
+    submitBtn.addEventListener("click", executeAnalysis);
+
+    returnInputsBtn.addEventListener("click", resetAnalysisView);
+
+    renderTestedItemsList();
+
 });
