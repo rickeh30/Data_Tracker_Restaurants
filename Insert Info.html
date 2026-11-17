@@ -1,11 +1,151 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Data</title>
+    <title>Insert Info</title>
     <link rel="stylesheet" href="mystyle2.css">
+
+    <style>
+        .insert-container {
+            width: 90%;
+            max-width: 650px;
+            margin: 35px auto;
+            padding: 32px;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            box-shadow: 0 8px 30px rgba(15, 23, 42, 0.06);
+        }
+
+        .insert-heading {
+            margin-bottom: 8px;
+            color: #0f172a;
+            font-size: 1.5rem;
+        }
+
+        .insert-description {
+            color: #64748b;
+            margin-bottom: 26px;
+            font-size: .95rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 9px;
+            color: #334155;
+            font-weight: 700;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 13px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 9px;
+            background: #fff;
+            color: #0f172a;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, .12);
+        }
+
+        .income-field {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 11px;
+        }
+
+        .insert-submit {
+            width: 100%;
+            padding: 14px;
+            margin-top: 8px;
+            border: none;
+            border-radius: 9px;
+            background: #0f172a;
+            color: white;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .insert-submit:hover {
+            background: #1e293b;
+        }
+
+        #stepDisplay {
+            margin-bottom: 20px;
+            color: #64748b;
+            font-size: .85rem;
+            font-weight: 600;
+        }
+
+        #confirmBox {
+            width: 90%;
+            max-width: 550px;
+            margin: 20px auto;
+            padding: 25px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+        }
+
+        #confirmText {
+            white-space: pre-wrap;
+            font-family: inherit;
+            line-height: 1.8;
+            color: #334155;
+        }
+
+        .confirm-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .confirm-actions button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        #confirmYes {
+            background: #0f172a;
+            color: white;
+        }
+
+        #confirmNo {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+
+        @media (max-width: 600px) {
+            .insert-container {
+                padding: 22px;
+            }
+
+            .confirm-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
+
 <body>
 
 <h1>Insert Info</h1>
@@ -18,54 +158,94 @@
     <a href="Suggestion.html" class="button">Suggestion</a>
 </div>
 
-<div class="input-info">
-    <select id="modeSelect">
-        <option value="">Choose Category</option>
-        <option value="earnings">Income (Daily Wage)</option>
-        <option value="expenses">Expenses (Monthly)</option>
-    </select>
+<div class="insert-container">
 
-    <label id="questionLabel">Choose Category</label>
-    <input id="inputField" type="number" style="display:none;" placeholder="Enter amount">
+    <h2 class="insert-heading">Add Financial Record</h2>
+    <p class="insert-description">
+        Enter your daily income or monthly expenses.
+    </p>
 
-    <select id="expenseType" style="display:none;">
-        <option value="">Choose Expense Type</option>
-        <option value="Gas">Gas</option>
-        <option value="Electricity">Electricity</option>
-        <option value="Water">Water</option>
-        <option value="Rent">Rent</option>
-        <option value="Phone+Wifi">Phone & Wifi</option>
-        <option value="Cellphone">Cellphone</option>
-        <option value="Website">Website</option>
-        <option value="Trash">Trash</option>
-        <option value="Accounted Fees">Fees</option>
-        <option value="Tax">Tax</option>
-        <option value="Salary">Staff Salary</option>
-        <option value="Repair">Repairs</option>
-        <option value="Supplies">Supplies</option>
-        <option value="Merchant Fees">Card Fees</option>
-        <option value="Other">Other</option>
-    </select>
+    <div id="stepDisplay">Step 1: Choose a category</div>
 
-    <select id="daySelect" style="display:none;">
-        <option value="">Choose Day</option>
-        <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option><option>20</option><option>21</option><option>22</option><option>23</option><option>24</option><option>25</option><option>26</option><option>27</option><option>28</option><option>29</option><option>30</option><option>31</option>
-    </select>
+    <div class="form-group" id="modeGroup">
+        <label for="modeSelect">Record Category</label>
+        <select id="modeSelect">
+            <option value="">Choose Category</option>
+            <option value="earnings">Daily Income</option>
+            <option value="expenses">Monthly Expenses</option>
+        </select>
+    </div>
 
-    <select id="monthSelect" style="display:none;">
-        <option value="">Choose Month</option>
-        <option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option>
-    </select>
+    <div class="form-group">
+        <label id="questionLabel" for="inputField">Choose Category</label>
+        <input id="inputField" type="number" min="0" step="0.01"
+               placeholder="Enter amount" style="display:none;">
+    </div>
 
-    <input id="yearInput" type="number" placeholder="Enter Year" style="display:none;">
-    <button id="submitBtn" class="button small-button">Submit</button>
+    <div class="form-group">
+        <div class="income-field" id="cashGroup" style="display:none;">
+            <label for="cashInput">Cash ($)</label>
+            <input id="cashInput" type="number" min="0" step="0.01"
+                   placeholder="Enter cash">
+        </div>
+
+        <div class="income-field" id="creditGroup" style="display:none;">
+            <label for="creditInput">Credit ($)</label>
+            <input id="creditInput" type="number" min="0" step="0.01"
+                   placeholder="Enter credit">
+        </div>
+
+        <div class="income-field" id="tipsGroup" style="display:none;">
+            <label for="tipsInput">Tips ($)</label>
+            <input id="tipsInput" type="number" min="0" step="0.01"
+                   placeholder="Enter tips">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="daySelect" id="dayLabel" style="display:none;">Day</label>
+        <select id="daySelect" style="display:none;">
+            <option value="">Choose Day</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="monthSelect" id="monthLabel" style="display:none;">Month</label>
+        <select id="monthSelect" style="display:none;">
+            <option value="">Choose Month</option>
+            <option>January</option>
+            <option>February</option>
+            <option>March</option>
+            <option>April</option>
+            <option>May</option>
+            <option>June</option>
+            <option>July</option>
+            <option>August</option>
+            <option>September</option>
+            <option>October</option>
+            <option>November</option>
+            <option>December</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="yearInput" id="yearLabel" style="display:none;">Year</label>
+        <input id="yearInput" type="number" placeholder="Enter Year"
+               style="display:none;">
+    </div>
+
+    <button id="submitBtn" class="insert-submit">Continue</button>
+
 </div>
 
 <div id="confirmBox" style="display:none;">
     <h3>Confirm Entry</h3>
     <pre id="confirmText"></pre>
-    <button id="confirmYes">Confirm</button>
-    <button id="confirmNo">Cancel</button>
+
+    <div class="confirm-actions">
+        <button id="confirmYes">Confirm and Save</button>
+        <button id="confirmNo">Go Back</button>
+    </div>
 </div>
 
 <script src="ScriptInsert.js"></script>
